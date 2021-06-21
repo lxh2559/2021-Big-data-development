@@ -32,6 +32,7 @@ public class S3Stream implements OutputFormat<String> {
     private static AmazonS3Client s3Client;
     private static Timer timer;
 
+    // 读取S3数据
     public static String readFile(String fileName) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         ClientConfiguration clientConfig = new ClientConfiguration();
@@ -42,6 +43,7 @@ public class S3Stream implements OutputFormat<String> {
         return IOUtil.getContent(s3Object.getObjectContent(), "UTF-8");
     }
 
+    // 存入数据到S3
     public void upload() throws IOException {
         synchronized(this) {
             for(int i = 0; i < keyword.length; i++) {
@@ -83,13 +85,15 @@ public class S3Stream implements OutputFormat<String> {
 
     }
 
+    // 消息分类读取
     @Override
     public void writeRecord(String s) throws IOException {
         synchronized(this) {
             for(int i = 0; i < keyword.length; i++) {
                 if(StringUtils.isNoneBlank(s) && s.contains(keyword[i])) {
                     if(fileWriter[i] == null) {
-                        file[i] = new File("result/" + keyword[i] + "_" + System.nanoTime() + ".txt");
+                        file[i] = new File("result/" + keyword[i]
+                                + "_" + System.nanoTime() + ".txt");
                         fileWriter[i] = new FileWriter(file[i], true);
                     }
                     fileWriter[i].append(s + "\n");

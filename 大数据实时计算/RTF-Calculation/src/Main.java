@@ -6,8 +6,9 @@ public class Main {
     private static Kafka kafka = new Kafka();
 
     public static void main(String[] args) throws Exception {
-//        String content = stream.readFile("test.txt");
-//        kafka.write(content);
+
+        String content = stream.readFile("test.txt");
+        kafka.write(content);
         kafka.upload();
     }
 }

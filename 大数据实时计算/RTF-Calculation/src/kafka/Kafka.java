@@ -16,6 +16,7 @@ public class Kafka {
             "bigdata36.depts.bingosoft.net:29036,bigdata37.depts.bingosoft.net:29037";
     private static String topic = "buy_ticket_2559";
 
+    // 存入数据到kafka
     public static void write(String content) {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", bootstrapServers);
@@ -35,6 +36,7 @@ public class Kafka {
         producer.close();
     }
 
+    // 存入数据到S3
     public static void upload() throws Exception {
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
         environment.setParallelism(1);
@@ -45,7 +47,8 @@ public class Kafka {
         properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
-        FlinkKafkaConsumer010<String> consumer = new FlinkKafkaConsumer010<String>(topic, new SimpleStringSchema(), properties);
+        FlinkKafkaConsumer010<String> consumer =
+                new FlinkKafkaConsumer010<String>(topic, new SimpleStringSchema(), properties);
         consumer.setCommitOffsetsOnCheckpoints(true);
         DataStreamSource<String> streamSource = environment.addSource(consumer);
         streamSource.writeUsingOutputFormat(new S3Stream());
